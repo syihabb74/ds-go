@@ -28,6 +28,14 @@ func NewCircularLL () *CircularLL {
 }
 
 
+func ( CLL *CircularLL ) nilTailHead(newNode *Node) {
+
+		CLL.Head = newNode
+		CLL.Tail = newNode
+		newNode.Prev = newNode
+		newNode.Next = newNode
+
+}
 
 func (CLL *CircularLL) Prefend (newNode *Node) {
 
@@ -37,24 +45,9 @@ func (CLL *CircularLL) Prefend (newNode *Node) {
 	}
 
 	if CLL.Head == nil {
-		CLL.Head = newNode
-		CLL.Tail = newNode
-		newNode.Prev = newNode
-		newNode.Next = newNode
+		CLL.nilTailHead(newNode)
 		return
 	}
-
-
-	if CLL.isSingleNode() {
-		newNode.Next = CLL.Tail
-		newNode.Prev = CLL.Tail
-		CLL.Tail.Next = newNode
-		CLL.Tail.Prev = newNode
-		CLL.Head = newNode
-		return
-	}
-
-	// fmt.Println(CLL.isSingleNode())
 
 	 newNode.Next = CLL.Head
 	 newNode.Prev = CLL.Tail
@@ -72,38 +65,16 @@ func (CLL *CircularLL ) Append (newNode *Node) {
 		return;
 	}
 
-	fmt.Println(CLL)
 	if CLL.Head == nil {
-		fmt.Println("Masuk KE appen")
-		// fmt.Println("Masuk sekali")
-		CLL.Head = newNode
-		CLL.Tail = newNode
-		newNode.Prev = newNode
-		newNode.Next = newNode
-		// fmt.Println(*CLL)
+		CLL.nilTailHead(newNode)
 		return
 	}
-
-	if CLL.isSingleNode() {
-		// fmt.Println("Masuk sekali ke single node")
-		CLL.Head.Next = newNode
-		CLL.Head.Prev = newNode
-		newNode.Next = CLL.Head
-		newNode.Prev = CLL.Head
-		CLL.Tail = newNode
-		// fmt.Println(CLL)
-		return
-	}
-
-	// fmt.Println("Masuk sini")
 
 	newNode.Prev = CLL.Tail
 	newNode.Next = CLL.Head
-	// fmt.Println("New node reassign",newNode.Next)
 	CLL.Tail.Next = newNode
 	CLL.Head.Prev = newNode
 	CLL.Tail = newNode
-	// fmt.Println("INI HARUsnya SATU",CLL.Tail.Next)
 
 }
 
@@ -180,6 +151,7 @@ func main () {
 	// fmt.Printf("Next Node dari Cll HEAD.Next\n%+v\n", cll.Head.Next.Next.Next)
 	// fmt.Printf("Next NOde dari Cll TAIL\n%+v\n", cll.Tail)
 	fmt.Printf("TAIL\n%+v\n", cll.Tail)
+
 
 }
 
