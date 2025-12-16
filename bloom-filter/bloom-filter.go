@@ -35,6 +35,15 @@ type Db struct {
 	Bloom *Bloom
 }
 
+func (dB *Db) MaybeExist (p *Product) {
+	maybeExist := dB.Bloom.probabilistic(p);
+	if maybeExist {
+		fmt.Println("You can continue to search in database the item probably exists")
+	} else {
+		fmt.Println("You can't continue to search because item doesn't not exist")
+	}
+}
+
 func (dB *Db) AddProduct (p *Product) {
 	hashSlug := dB.Bloom.hashSlug(p.Slug) // it can be hash with murmurHash to avoid collision
 	hashSlugReverse := dB.Bloom.hashSlugReverse(p.Slug)
@@ -58,6 +67,24 @@ type Bloom struct {
 
 func createBloom () *Bloom {
 	return &Bloom{}
+}
+
+func (b *Bloom) probabilistic (p *Product) bool {
+	hashSlug := b.hashSlug(p.Slug) // it can be hash with murmurHash to avoid collision
+	hashSlugReverse := b.hashSlugReverse(p.Slug)
+	hashId := b.hashId(p.ID)
+	hashIdReverse := b.hashIdReverse(p.ID)
+	hashName := b.hashMidLetter(p.Name)
+
+	if b.bit[hashSlug] == 0 ||
+	   b.bit[hashSlugReverse] == 0 ||
+	   b.bit[hashId] == 0 ||
+	   b.bit[hashIdReverse] == 0 ||
+	   b.bit[hashName] == 0  {
+		return false
+	   }
+
+	   return true
 }
 
 func (b *Bloom) hashSlug(slug string) int {
@@ -108,7 +135,10 @@ func (b *Bloom) onBit (indexes ...int) {
 func main () {
 	db1 := createDb();
 	p1 := createProduct("Yakult Super");
+	p2 := createProduct("Yakult");
 	db1.AddProduct(p1)
+	db1.MaybeExist(p2)
+	db1.MaybeExist(p1)
 	// fmt.Println(p1)
 	fmt.Println(db1.Bloom)
 }
